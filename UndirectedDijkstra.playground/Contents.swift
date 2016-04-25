@@ -1,15 +1,17 @@
 public class Vertex {
     var key: String?
+    var visited: Bool?
+    var shortestPathTo: Int
     var neighbors: Array<Edge>
     init() {
         self.neighbors = Array<Edge>()
+        self.shortestPathTo = -1
     }
 }
 
 public class Edge {
     var neighbor: Vertex
     var weight: Int
-    var visited: Bool?
     init() {
         weight = 0
         self.neighbor = Vertex()
@@ -37,6 +39,7 @@ public class SwiftGraph {
         //set the key
         var childVertex: Vertex = Vertex()
         childVertex.key = key
+        childVertex.visited = false
         //add the vertex to the graph canvas
         canvas.append(childVertex)
         return childVertex
@@ -47,7 +50,6 @@ public class SwiftGraph {
         //establish the default properties
         newEdge.neighbor = neighbor
         newEdge.weight = weight
-        newEdge.visited = false
         source.neighbors.append(newEdge)
         //check for undirected graph
         if (isDirected == false) {
@@ -56,7 +58,6 @@ public class SwiftGraph {
             //establish the reversed properties
             reverseEdge.neighbor = source
             reverseEdge.weight = weight
-            reverseEdge.visited = false
             neighbor.neighbors.append(reverseEdge)
         }
     }
@@ -72,7 +73,7 @@ public class SwiftGraph {
             newPath.destination = e.neighbor
             newPath.previous = nil
             newPath.total = e.weight
-            e.visited = true
+            e.neighbor.shortestPathTo = e.weight
             //add the new path to the frontier
             frontier.append(newPath)
             
@@ -100,8 +101,9 @@ public class SwiftGraph {
             for e in bestPath.destination.neighbors {
                 var newPath: Path = Path()
 
-                if (e.visited == false) {
-                    e.visited = true
+            if ((e.neighbor.shortestPathTo > bestPath.total + e.weight) || (e.neighbor.shortestPathTo == -1)) 
+                && (e.neighbor.visited != true) {
+                     e.neighbor.shortestPathTo = bestPath.total + e.weight
                     newPath.destination = e.neighbor
                     newPath.previous = bestPath
                     newPath.total = bestPath.total + e.weight
@@ -118,8 +120,7 @@ public class SwiftGraph {
             
         }
         
-        
-        
+
         printSeperator("FINALPATHS")
         printPaths(finalPaths as [Path], source: source)
         printSeperator("BESTPATH BEFORE")
