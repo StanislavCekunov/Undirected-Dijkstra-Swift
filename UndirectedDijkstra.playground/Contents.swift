@@ -96,14 +96,15 @@ public class SwiftGraph {
             }
             
             
+            if bestPath.previous != nil {
+                bestPath.previous.destination.visited = true
+            }
             
-            ///// ---------- BEST PATH LOOP
             for e in bestPath.destination.neighbors {
                 var newPath: Path = Path()
-
-            if ((e.neighbor.shortestPathTo > bestPath.total + e.weight) || (e.neighbor.shortestPathTo == -1)) 
+                if ((e.neighbor.shortestPathTo > bestPath.total + e.weight) || (e.neighbor.shortestPathTo == -1)) 
                 && (e.neighbor.visited != true) {
-                     e.neighbor.shortestPathTo = bestPath.total + e.weight
+                    e.neighbor.shortestPathTo = bestPath.total + e.weight
                     newPath.destination = e.neighbor
                     newPath.previous = bestPath
                     newPath.total = bestPath.total + e.weight
@@ -112,6 +113,7 @@ public class SwiftGraph {
                 }
                 
             }
+            
             
             //preserve the bestPath
             finalPaths.append(bestPath)
